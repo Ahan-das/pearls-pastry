@@ -1,0 +1,38 @@
+/*
+ * Pearls & Pastry design tokens.
+ * Palette is lifted from the hero photograph so the page and the cup read as one
+ * surface: the cream is the photo's own backdrop, caramel is the brown-sugar tea,
+ * cocoa is the pearls. One accent family (caramel/cocoa), one warm neutral.
+ */
+:root {
+  --cream: #f5e7d6;        /* page, matches the photo backdrop */
+  --cream-hi: #fbf3e9;     /* lifted surfaces */
+  --cream-lo: #ecd8c1;     /* recessed surfaces, hairlines */
+  --caramel: #c9976a;      /* the tea */
+  --caramel-deep: #a86f47;
+  --cocoa: #5a3420;        /* primary buttons */
+  --cocoa-deep: #3f2315;
+  --ink: #2a170d;          /* headline */
+  --ink-soft: #6b5243;     /* body, labels */
+  --rose: #cf5a4f;         /* the one warm pop: hearts, strawberry */
+
+  --font-display: var(--font-dm-serif, "DM Serif Display"), "Lora", Georgia, serif;
+  --font-text: var(--font-figtree, "Figtree"), "Poppins", system-ui, sans-serif;
+  --font-script: var(--font-lobster, "Lobster"), "Lora", cursive;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.32, 0.72, 0, 1);
+  --spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017 19.4%, 1.077 22.4%, 1.1 25.9%, 1.083 29.6%, 1.019 38.2%, 0.996 42.7%, 0.991 47.8%, 1.001 63.5%, 1);
+
+  /* layers (the only z-indexes on the site) */
+  --z-back: 1;
+  --z-art: 2;
+  --z-copy: 3;
+  --z-front: 4;
+  --z-header: 20;
+  --z-grain: 30;
+
+  --radius-pill: 999px;
+  --radius-card: 22px;
+}

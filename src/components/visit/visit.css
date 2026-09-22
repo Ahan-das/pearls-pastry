@@ -1,0 +1,86 @@
+/* buttons (.btn) come from styles/buttons.css */
+.visit {
+  padding: clamp(80px, 14svh, 150px) clamp(20px, 6.2vw, 110px) clamp(110px, 18svh, 190px);
+  background: linear-gradient(to bottom, var(--cream), #efdcc5);
+}
+.visit__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 110px);
+  max-width: 1480px;
+  margin: 0 auto;
+}
+.visit h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(56px, 7vw, 120px);
+  line-height: 0.96;
+  color: var(--ink);
+}
+.visit__address {
+  display: flex;
+  gap: 14px;
+  margin-top: clamp(26px, 4svh, 40px);
+  font-style: normal;
+  font-size: clamp(16px, 1.2vw, 19px);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.visit__address svg { flex: none; margin-top: 3px; color: var(--caramel-deep); }
+.visit__address > span { display: grid; }
+.visit__address > span > span:first-child { font-weight: 600; color: var(--ink); }
+.visit__ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(28px, 4.4svh, 44px); }
+
+/* double-bezel card: a cream plate sitting in a caramel tray */
+.visit__card {
+  padding: 8px;
+  border-radius: 34px;
+  background: color-mix(in oklab, var(--caramel) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--caramel-deep) 18%, transparent);
+}
+.visit__card-in {
+  padding: clamp(26px, 3vw, 44px);
+  border-radius: 26px;
+  background: var(--cream-hi);
+  box-shadow: inset 0 1px 0 #fff, 0 24px 50px -30px rgb(90 52 32 / 0.45);
+}
+.visit__card-head { display: flex; align-items: center; gap: 12px; color: var(--cocoa); }
+.visit__card-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 1.9vw, 30px);
+  color: var(--ink);
+}
+.visit__status {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #f1e2d6;
+  color: #8a4b3c;
+}
+.visit__status[data-open] { background: #e2ecd6; color: #3d6a26; }
+.visit__hours { display: grid; gap: 0; margin: clamp(20px, 3svh, 30px) 0 0; }
+.visit__hours div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  font-size: clamp(15px, 1.1vw, 17px);
+}
+.visit__hours div + div { border-top: 1px dashed color-mix(in oklab, var(--caramel-deep) 35%, transparent); }
+.visit__hours dt { color: var(--ink-soft); }
+.visit__hours dd { margin: 0; font-weight: 600; color: var(--ink); text-align: right; }
+.visit__note { margin: 18px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+
+@media (max-width: 899px) {
+  .visit__grid { grid-template-columns: 1fr; }
+  .visit__hours div { flex-direction: column; gap: 4px; }
+  .visit__hours dd { text-align: left; }
+}

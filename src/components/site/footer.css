@@ -1,0 +1,74 @@
+.foot {
+  position: relative;
+  z-index: 1;
+  margin-top: -44px;
+  padding: clamp(56px, 9svh, 96px) clamp(20px, 6.2vw, 110px) 28px;
+  border-radius: 44px 44px 0 0;
+  background: var(--cocoa-deep);
+  color: #f3e3cf;
+  overflow: hidden;
+}
+.foot a { color: inherit; text-decoration: none; }
+.foot__top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  align-items: start;
+  gap: 40px;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+.foot__brand { display: flex; align-items: center; gap: 20px; }
+.foot__brand p { margin: 0; font-size: 15px; line-height: 1.6; color: color-mix(in oklab, #f3e3cf 75%, transparent); }
+.foot nav ul { display: grid; grid-template-columns: repeat(2, auto); gap: 10px 40px; margin: 0; padding: 0; list-style: none; }
+.foot nav a {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+.foot nav a:hover { opacity: 1; }
+.foot__social { display: flex; gap: 10px; }
+.foot__social a {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgb(255 243 233 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(255 243 233 / 0.14);
+  transition: transform 0.45s var(--ease-out), background-color 0.3s;
+}
+.foot__social a:hover { transform: translateY(-2px); background: rgb(255 243 233 / 0.14); }
+
+.foot__word {
+  margin: clamp(40px, 7svh, 80px) 0 0;
+  font-family: var(--font-script);
+  font-size: clamp(64px, 13.2vw, 230px);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  color: #e8cfb0;
+  letter-spacing: -0.005em;
+}
+.foot__word span { font-size: 0.5em; vertical-align: 0.35em; color: var(--caramel); }
+
+.foot__base {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1480px;
+  margin: clamp(24px, 4svh, 40px) auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgb(255 243 233 / 0.12);
+  font-size: 13px;
+  color: color-mix(in oklab, #f3e3cf 65%, transparent);
+}
+.foot__base a:hover { color: #f3e3cf; }
+
+@media (max-width: 899px) {
+  .foot { border-radius: 30px 30px 0 0; }
+  .foot__top { grid-template-columns: 1fr; gap: 28px; }
+  .foot__brand { align-items: flex-start; flex-direction: column; }
+}

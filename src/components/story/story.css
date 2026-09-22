@@ -1,0 +1,138 @@
+/* ============================================================
+   MORE THAN A CAFÉ: editorial split, back on the hero's cream.
+   ============================================================ */
+.story {
+  position: relative;
+  padding: clamp(96px, 18svh, 190px) clamp(20px, 6.2vw, 110px) clamp(80px, 14svh, 150px);
+  background: var(--cream);
+  overflow: clip;
+}
+.story__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 110px);
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.story__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(52px, 6.4vw, 108px);
+  line-height: 0.98;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.story__days {
+  margin: clamp(28px, 5svh, 52px) 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.5vw, 40px);
+  line-height: 1.3;
+  color: var(--ink);
+}
+.story__days em {
+  font-style: italic;
+  color: var(--caramel-deep);
+  padding-right: 0.05em;
+}
+.story__days li:last-child em { color: var(--rose); }
+
+/* each line lights up as it passes the middle of the screen */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .story__days li {
+      animation: story-lit linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 48%;
+    }
+  }
+}
+@keyframes story-lit {
+  from { opacity: 0.16; transform: translateX(-10px); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+.story__body {
+  max-width: 40ch;
+  margin: clamp(26px, 4svh, 40px) 0 0;
+  font-size: clamp(15.5px, 1.15vw, 18px);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---------- photos ---------- */
+.story__photos {
+  position: relative;
+  aspect-ratio: 1 / 1.02;
+  perspective: 1200px;
+}
+.story__polaroid,
+.story__print {
+  position: absolute;
+  margin: 0;
+  background: var(--cream-hi);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.8) inset,
+    0 2px 3px rgb(90 52 32 / 0.08),
+    0 30px 60px -28px rgb(90 52 32 / 0.5);
+}
+.story__polaroid {
+  left: 0;
+  top: 20%;
+  width: 68%;
+  padding: 14px 14px 0;
+  transform-style: preserve-3d;
+  rotate: -4deg;
+  z-index: 2;
+}
+.story__polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 920 / 736;
+  object-fit: cover;
+}
+.story__polaroid figcaption {
+  padding: 14px 4px 18px;
+  font-family: var(--font-script);
+  font-size: clamp(22px, 1.9vw, 30px);
+  text-align: center;
+  color: var(--cocoa);
+}
+.story__tape {
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  width: 120px;
+  height: 32px;
+  translate: -50% 0;
+  rotate: 3deg;
+  background: color-mix(in oklab, var(--caramel) 38%, transparent);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  backdrop-filter: none;
+}
+.story__print {
+  right: 0;
+  top: 2%;
+  width: 48%;
+  padding: 10px 10px 30px;
+  z-index: 1;
+}
+/* a second photo on the table: the signature cup, printed on the same stock */
+.story__print img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+@media (max-width: 899px) {
+  .story__grid { grid-template-columns: 1fr; }
+  .story__photos { width: min(100%, 520px); margin-inline: auto; }
+}

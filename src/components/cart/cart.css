@@ -1,0 +1,53 @@
+/* ---------- "Add" button (base; sections restyle it) ---------- */
+.addbtn { display: inline-flex; align-items: center; gap: 12px; }
+.addbtn i { display: grid; place-items: center; overflow: hidden; }
+
+/* ---------- toast ---------- */
+.toast-wrap {
+  position: fixed;
+  right: clamp(16px, 4.2vw, 64px);
+  top: 92px;
+  z-index: var(--z-header);
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 320px;
+  padding: 8px 8px 8px 8px;
+  border-radius: 20px;
+  background: color-mix(in oklab, var(--cream-hi) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px color-mix(in oklab, var(--cocoa) 10%, transparent),
+    0 24px 50px -24px rgb(63 35 21 / 0.55);
+  color: var(--ink);
+}
+.toast__thumb { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--cream); }
+.toast__thumb img { width: 80%; height: 80%; object-fit: contain; }
+.toast__text { display: grid; font-size: 14px; line-height: 1.3; }
+.toast__text small { font-size: 12.5px; color: var(--ink-soft); }
+.toast__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--cocoa);
+  color: var(--cream-hi);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (max-width: 899px) {
+  .toast-wrap { left: 12px; right: 12px; top: auto; bottom: 14px; }
+  .toast { min-width: 0; }
+}
