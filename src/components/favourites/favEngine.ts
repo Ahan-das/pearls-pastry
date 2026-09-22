@@ -1,9 +1,16 @@
 /**
  * Customer Favourites: a lazy-susan tray.
  *
- * The five dishes stand around the rim of a round serving tray seen from the
- * front. Scrolling turns the tray one dish at a time (step-snapped, shared with
- * lib/scrollSnap): the next dish swings round from the back, grows as it comes
+ * Two ways to turn it, chosen by the pointer:
+ *
+ * - Mouse and trackpad: the section is pinned and the page scroll turns the
+ *   tray one dish at a time (step-snapped, shared with lib/scrollSnap).
+ * - Touch: the section is an ordinary one-screen section that scrolls past
+ *   like any other, and the tray turns ONLY by dragging it, tapping a card or
+ *   using the arrows. Tying it to scroll as well made the page fight the
+ *   finger, because every scroll tried to settle on a dish.
+ *
+ * Either way the next dish swings round from the back, grows as it comes
  * forward and parks at the front edge; the one you just saw swings away behind.
  * Depth comes from the circle itself: size, softness and stacking all follow
  * each dish's place on the rim.
@@ -49,6 +56,8 @@ export function startFav(
   const t0 = last;
   let prog = 0, progTarget = 0, current = -1;
   const ptr = { tx: 0, ty: 0, x: 0, y: 0 };
+  /** touch screens turn the tray by hand only; the page scroll is left alone */
+  const manual = window.matchMedia("(pointer: coarse)").matches;
   // touch screens: the first time the tray is reached it gives a small wiggle,
   // so it reads as something you can turn by hand
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -96,10 +105,14 @@ export function startFav(
   };
 
   const readScroll = () => {
+    if (manual) return; // the tray's position is the visitor's, not the scrollbar's
     const r = root.getBoundingClientRect();
     const travel = Math.max(1, r.height - window.innerHeight);
     progTarget = clamp(-r.top / travel);
   };
+
+  const toProg = (i: number) => clamp(i / (N - 1));
+  const posNow = () => prog * (N - 1);
 
   // progress -> tray position, with a soft rest at every dish
   const toPos = (p: number) => {
@@ -118,7 +131,7 @@ export function startFav(
     prog = lerp(prog, progTarget, k(10));
     ptr.x = lerp(ptr.x, ptr.tx, k(4));
     ptr.y = lerp(ptr.y, ptr.ty, k(4));
-    const pos = toPos(prog);
+    const pos = manual ? prog * (N - 1) : toPos(prog);
 
     mixInto(root.style, pos);
     const idx = Math.round(pos);
@@ -127,7 +140,11 @@ export function startFav(
       opts.onIndex(idx);
     }
 
-    if (nudgeAt === -1 && Math.abs(root.getBoundingClientRect().top) < 2 && prog < 0.02) nudgeAt = t;
+    if (nudgeAt === -1 && prog < 0.02) {
+      const top = root.getBoundingClientRect().top;
+      const arrived = manual ? top < window.innerHeight * 0.35 && top > -window.innerHeight * 0.5 : Math.abs(top) < 2;
+      if (arrived) nudgeAt = t;
+    }
     const nt = t - nudgeAt;
     const nudge = nt > 0 && nt < 2.4 ? Math.sin(nt * Math.PI * 1.6) * Math.exp(-nt * 1.9) * 0.2 : 0;
     const turn = pos + nudge;
@@ -173,17 +190,75 @@ export function startFav(
     raf = requestAnimationFrame(frame);
   }
 
-  const snap = createSnap({
-    root,
-    stage,
-    count: N,
-    reduced,
-    drag: true,
-    onProgress: () => {
-      readScroll();
+  const snap = manual
+    ? null
+    : createSnap({
+        root,
+        stage,
+        count: N,
+        reduced,
+        drag: true,
+        onProgress: () => {
+          readScroll();
+          kick();
+        },
+      });
+
+  const goTo = (i: number) => {
+    const target = Math.max(0, Math.min(N - 1, i));
+    if (snap) snap.goTo(target);
+    else {
+      progTarget = toProg(target);
       kick();
-    },
-  });
+    }
+  };
+
+  // ---- touch: drag the tray round, 1:1 under the finger ----
+  const dragUnit = () => Math.min(300, Math.max(150, stage.clientWidth * 0.42)); // px per dish
+  let drag: { x: number; y: number; id: number; pos: number; t: number } | null = null;
+  let dragMode: "turn" | "none" | null = null;
+  let lastMove = { x: 0, t: 0, v: 0 };
+
+  const onDown = (e: PointerEvent) => {
+    if (!manual || (e.target as HTMLElement).closest("a, button, input, textarea, select")) return;
+    drag = { x: e.clientX, y: e.clientY, id: e.pointerId, pos: posNow(), t: performance.now() };
+    dragMode = null;
+    lastMove = { x: e.clientX, t: performance.now(), v: 0 };
+  };
+  const onMove = (e: PointerEvent) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (dragMode === null) {
+      if (Math.hypot(dx, dy) < 7) return;
+      // a mostly vertical swipe belongs to the page, not the tray
+      dragMode = Math.abs(dx) > Math.abs(dy) * 1.1 ? "turn" : "none";
+      if (dragMode === "none") {
+        drag = null;
+        return;
+      }
+      stage.dataset.dragging = "";
+      try { stage.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+    }
+    progTarget = toProg(drag.pos - dx / dragUnit());
+    const now = performance.now();
+    lastMove = { x: e.clientX, t: now, v: ((e.clientX - lastMove.x) / Math.max(1, now - lastMove.t)) * 0.6 + lastMove.v * 0.4 };
+    kick();
+  };
+  const onUp = (e: PointerEvent) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const turned = dragMode === "turn";
+    const from = Math.round(drag.pos);
+    const quick = performance.now() - drag.t < 260 && Math.abs(e.clientX - drag.x) > 24;
+    drag = null;
+    dragMode = null;
+    if (!turned) return;
+    delete stage.dataset.dragging;
+    // land on the nearest dish; a quarter turn or a quick flick carries one further
+    const delta = posNow() - from;
+    let target = from + Math.sign(delta) * Math.ceil(Math.abs(delta) - 0.25);
+    if ((quick || Math.abs(lastMove.v) > 0.35) && target === from) target = from + Math.sign(delta || -lastMove.v);
+    goTo(target);
+  };
 
   const onPointer = (e: PointerEvent) => {
     if (e.pointerType !== "mouse") return;
@@ -209,6 +284,12 @@ export function startFav(
   ro.observe(stage);
   stage.addEventListener("pointermove", onPointer, { passive: true });
   stage.addEventListener("pointerleave", onLeave);
+  if (manual) {
+    stage.addEventListener("pointerdown", onDown, { passive: true });
+    stage.addEventListener("pointermove", onMove, { passive: true });
+    stage.addEventListener("pointerup", onUp, { passive: true });
+    stage.addEventListener("pointercancel", onUp, { passive: true });
+  }
 
   measure();
   readScroll();
@@ -220,15 +301,20 @@ export function startFav(
       disposed = true;
       cancelAnimationFrame(raf);
       delete root.dataset.ready;
-      snap.destroy();
+      snap?.destroy();
       io.disconnect();
       ro.disconnect();
       stage.removeEventListener("pointermove", onPointer);
       stage.removeEventListener("pointerleave", onLeave);
+      stage.removeEventListener("pointerdown", onDown);
+      stage.removeEventListener("pointermove", onMove);
+      stage.removeEventListener("pointerup", onUp);
+      stage.removeEventListener("pointercancel", onUp);
     },
-    goTo: (i, dur) => snap.goTo(i, dur),
+    goTo: (i, dur) => (snap ? snap.goTo(i, dur) : goTo(i)),
     step: (dir) => {
-      snap.step(dir);
+      if (snap) snap.step(dir);
+      else goTo(Math.round(posNow()) + dir);
     },
   };
 }

@@ -359,3 +359,14 @@
 @media (max-width: 899px) and (max-height: 720px) {
   .fav__line { display: none; }
 }
+
+/* ============================================================
+   Touch screens: the chapter is one ordinary screen that scrolls
+   past like any other section. The tray turns by drag, card tap or
+   the arrows only, so the page never fights the finger.
+   ============================================================ */
+@media (pointer: coarse) {
+  .fav { height: auto; min-height: 100svh; }
+  .fav__stage { position: relative; height: 100svh; min-height: 560px; }
+  .fav__stage[data-dragging] { cursor: grabbing; }
+}
